@@ -1,12 +1,22 @@
-import express from 'express';
+import express, { Request, Response } from "express";
+import dotnev from "dotenv";
+dotnev.config();
 
 const app = express();
+const port = process.env.PORT || 3000;
 
-app.get('/', (req, res) => {
-  res.send('Hello World');
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+
+app.get("/", (req: Request, res: Response) => {
+  res.json({
+    success: true,
+    message: "Your server is up and running....",
+  });
 });
 
-app.listen(3000, () => {
-  console.log('Server is running on port 3000');
+app.listen(port, () => {
+  console.log(
+    `Listening on port ${port}. Visit http://localhost:${port}/ in your browser.`
+  );
 });
-
