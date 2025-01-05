@@ -2,6 +2,7 @@ import db from "../lib/db";
 import { Request, Response } from "express";
 import { signupSchema } from "../schema/signup";
 import { signinSchema } from "../schema/signin";
+import { uploadImageToCloudinary } from "../lib/upload-image";
 import jwt from "jsonwebtoken";
 import bcrypt from "bcryptjs";
 import dotenv from "dotenv";
@@ -10,6 +11,27 @@ dotenv.config();
 export const signup = async (req: Request, res: Response) => {
   try {
     const validatedData = signupSchema.safeParse(req.body);
+
+    if (!req.files || !req.files.profile) {
+      res.status(400).json({
+        success: false,
+        message: "Files are missing",
+      });
+      return;
+    }
+
+    const profileImgFile = Array.isArray(req.files.profile)
+      ? req.files.profile[0]
+      : req.files.profile;
+
+    if (!profileImgFile.tempFilePath) {
+      res.status(400).json({
+        success: false,
+        message: "Invalid file upload",
+      });
+      return;
+    }
+
     if (!validatedData.success) {
       res.status(400).json({
         success: false,
@@ -17,16 +39,13 @@ export const signup = async (req: Request, res: Response) => {
         errors: validatedData.error.format(),
       });
     } else {
-      const {
-        fullName,
-        email,
-        password,
-        username,
-        bio,
-        dateOfBirth,
-        gender,
-        profile,
-      } = validatedData.data;
+      const { fullName, email, password, username, bio, dateOfBirth, gender } =
+        validatedData.data;
+
+      const uploadProfileImage = await uploadImageToCloudinary({
+        file: { tempFilePath: profileImgFile.tempFilePath },
+        folder: process.env.FOLDER_NAME || "",
+      });
 
       const existUser = await db.user.findUnique({
         where: {
@@ -53,7 +72,7 @@ export const signup = async (req: Request, res: Response) => {
           bio,
           dateOfBirth,
           gender,
-          profile,
+          profile: uploadProfileImage.secure_url,
         },
       });
 
@@ -108,7 +127,7 @@ export const signin = async (req: Request, res: Response) => {
       }
 
       const payload = {
-        userId: existUser.id, 
+        userId: existUser.id,
         email: existUser.email,
       };
 
