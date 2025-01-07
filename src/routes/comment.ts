@@ -1,14 +1,14 @@
 import express from "express";
-// import {
-//   createPost,
-//   getPostById,
-//   getPosts,
-// } from "../controllers/post-controller";
-// import { verifyToken } from "../lib/verify-token";
+import {
+  createComment,
+  getComments,
+  getCommentsById,
+} from "../controllers/comment-controllers";
+import { verifyToken } from "../lib/verify-token";
 
 const router = express.Router();
-// router.post("/create", verifyToken, createPost);
-// router.get("/get", getPosts);
-// router.get("/get-single/:postId", getPostById);
+router.post("/create", verifyToken, createComment);
+router.get("/get", getComments);
+router.get("/get-single/:commentId", getCommentsById);
 
 export default router;

@@ -116,31 +116,4 @@ export const getPostById = async (req: Request, res: Response) => {
       message: (error as Error).message,
     });
   }
-
-  // try {
-  //   const post = await db.post.findOne({
-  //     where: { id: req.params.id },
-  //     include: {
-  //       author: true,
-  //     },
-  //   });
-
-  //   if (!post) {
-  //     res.status(404).json({
-  //       success: false,
-  //       message: "Post not found",
-  //     });
-  //   } else {
-  //     res.json({
-  //       success: true,
-  //       message: "Post fetched successfully",
-  //       data: post,
-  //     });
-  //   }
-  // } catch (error) {
-
-  //   res.status(500).json({
-  //     success: false,
-  //     message: (error as Error).message,
-  //   });
 };

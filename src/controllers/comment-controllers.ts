@@ -4,14 +4,14 @@ import { commentSchema } from "../schema/comment";
 
 export const createComment = async (req: Request, res: Response) => {
   try {
-    
     const { userId } = req.existUser as { userId: string };
     const validatedData = commentSchema.safeParse(req.body);
 
     if (!validatedData.success) {
-      return res
+      res
         .status(400)
         .json({ success: false, message: validatedData.error.format() });
+      return;
     }
 
     const { postId, title } = validatedData.data;
@@ -27,6 +27,84 @@ export const createComment = async (req: Request, res: Response) => {
     res.status(201).json({
       success: true,
       message: "comment created successfully",
+      data: comment,
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: (error as Error).message,
+    });
+  }
+};
+
+export const getComments = async (req: Request, res: Response) => {
+  try {
+    const comments = await db.comment.findMany({
+      include: {
+        user: {
+          select: {
+            id: true,
+            username: true,
+          },
+        },
+        Post: {
+          select: {
+            id: true,
+            title: true,
+          },
+        },
+      },
+    });
+    if (!comments) {
+      res.status(404).json({
+        success: false,
+        message: "No comments found",
+      });
+    }
+
+    res.status(200).json({
+      success: true,
+      message: "Comments fetched successfully",
+      data: comments,
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: (error as Error).message,
+    });
+  }
+};
+
+export const getCommentsById = async (req: Request, res: Response) => {
+  try {
+    const { commentId } = req.params;
+    const comment = await db.comment.findUnique({
+      where: { id: commentId },
+      include: {
+        user: {
+          select: {
+            id: true,
+            username: true,
+          },
+        },
+        Post: {
+          select: {
+            id: true,
+            title: true,
+          },
+        },
+      },
+    });
+    if (!comment) {
+      res.status(404).json({
+        success: false,
+        message: "Comment not found",
+      });
+    }
+
+    res.status(200).json({
+      success: true,
+      message: "Comment fetched successfully",
       data: comment,
     });
   } catch (error) {
