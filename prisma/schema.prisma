@@ -30,6 +30,7 @@ model User {
   dateOfBirth DateTime?
   gender      Gender?   @default(MALE)
   posts       Post[]
+  Comment     Comment[]
 }
 
 model Post {
@@ -50,4 +51,6 @@ model Comment {
   title  String
   Post   Post?   @relation(fields: [postId], references: [id])
   postId String?
+  user   User    @relation(fields: [userId], references: [id])
+  userId String
 }
