@@ -1,6 +1,9 @@
 import express, { Request, Response } from "express";
 import authRoute from "./routes/auth";
+import postRoute from "./routes/post";
+import commentRoute from "./routes/comment";
 import cloudinaryConnect from "./lib/cloudinary";
+import cookieParser from "cookie-parser";
 import fileUpload from "express-fileupload";
 import dotnev from "dotenv";
 dotnev.config();
@@ -10,6 +13,7 @@ const port = process.env.PORT || 3000;
 
 cloudinaryConnect();
 app.use(express.json());
+app.use(cookieParser());
 app.use(express.urlencoded({ extended: true }));
 app.use(
   fileUpload({
@@ -26,6 +30,8 @@ app.get("/", (req: Request, res: Response) => {
 });
 
 app.use("/api/v1/auth", authRoute);
+app.use("/api/v1/post", postRoute);
+app.use("/api/v1/comment", commentRoute);
 
 app.listen(port, () => {
   console.log(
