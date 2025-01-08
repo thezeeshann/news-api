@@ -3,6 +3,7 @@ import authRoute from "./routes/auth";
 import postRoute from "./routes/post";
 import commentRoute from "./routes/comment";
 import cloudinaryConnect from "./lib/cloudinary";
+import userRoute from "./routes/profile";
 import cookieParser from "cookie-parser";
 import fileUpload from "express-fileupload";
 import dotnev from "dotenv";
@@ -30,6 +31,7 @@ app.get("/", (req: Request, res: Response) => {
 });
 
 app.use("/api/v1/auth", authRoute);
+app.use("/api/v1/user", userRoute);
 app.use("/api/v1/post", postRoute);
 app.use("/api/v1/comment", commentRoute);
 
