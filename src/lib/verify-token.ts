@@ -15,7 +15,6 @@ export const verifyToken = (
   next: NextFunction
 ) => {
   try {
-    // const token = req.header("Authorization")?.replace("Bearer ", "");
     const token = req.header("Authorization")?.replace("Bearer ", "");
     if (!token || token === undefined) {
       res.status(404).json({
@@ -24,19 +23,6 @@ export const verifyToken = (
       });
       return;
     }
-
-    console.log(token, "tokennnnnn");
-
-    // console.log(JSON.stringify(req.headers));
-
-    // if (!token) {
-    //   res.status(404).json({
-    //     success: false,
-    //     message: "Token missing",
-    //   });
-    //   return;
-    // }
-
     const jwtSecret = process.env.JWT_SECRET;
     if (!jwtSecret) {
       throw new Error("JWT_SECRET is not defined in the environment variables");
