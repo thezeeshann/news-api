@@ -114,3 +114,30 @@ export const getCommentsById = async (req: Request, res: Response) => {
     });
   }
 };
+
+export const deleteComment = async (req: Request, res: Response) => {
+  try {
+    const { commentId } = req.params;
+
+    const comment = await db.comment.findUnique({ where: { id: commentId } });
+
+    if (!comment) {
+      res.status(404).json({
+        success: false,
+        message: "Comment not found",
+      });
+    }
+
+    await db.comment.delete({ where: { id: commentId } });
+
+    res.status(200).json({
+      success: true,
+      message: "Comment deleted successfully",
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: (error as Error).message,
+    });
+  }
+};

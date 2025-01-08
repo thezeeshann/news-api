@@ -117,3 +117,34 @@ export const getPostById = async (req: Request, res: Response) => {
     });
   }
 };
+
+export const deletePost = async (req: Request, res: Response) => {
+  try {
+    const { postId } = req.params;
+    const post = await db.post.findUnique({
+      where: { id: postId },
+      include: {
+        author: true,
+      },
+    });
+
+    if (!post) {
+      res.status(404).json({
+        success: false,
+        message: "Post not found",
+      });
+    }
+
+    await db.post.delete({ where: { id: postId } });
+
+    res.json({
+      success: true,
+      message: "Post deleted successfully",
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: (error as Error).message,
+    });
+  }
+};
