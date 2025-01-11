@@ -3,6 +3,7 @@ import authRoute from "./routes/auth";
 import postRoute from "./routes/post";
 import commentRoute from "./routes/comment";
 import cloudinaryConnect from "./lib/cloudinary";
+import cors from "cors";
 import userRoute from "./routes/profile";
 import cookieParser from "cookie-parser";
 import fileUpload from "express-fileupload";
@@ -14,6 +15,11 @@ const port = process.env.PORT || 3000;
 
 cloudinaryConnect();
 app.use(express.json());
+app.use(
+  cors({
+    origin: "*",
+  })
+);
 app.use(cookieParser());
 app.use(express.urlencoded({ extended: true }));
 app.use(
