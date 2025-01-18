@@ -94,7 +94,25 @@ export const getPostById = async (req: Request, res: Response) => {
     const post = await db.post.findUnique({
       where: { id: postId },
       include: {
-        author: true,
+        author: {
+          select: {
+            id: true,
+            fullName: true,
+            username: true,
+            profile: true,
+          },
+        },
+        comments: {
+          include: {
+            user: {
+              select: {
+                id: true,
+                profile: true,
+                fullName: true,
+              },
+            },
+          },
+        },
       },
     });
 
