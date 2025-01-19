@@ -70,7 +70,19 @@ export const getPosts = async (req: Request, res: Response) => {
   try {
     const posts = await db.post.findMany({
       include: {
-        author: true,
+        author: {
+          select: {
+            id: true,
+            fullName: true,
+            username: true,
+            profile: true,
+          },
+        },
+        _count: {
+          select: {
+            comments: true,
+          },
+        },
       },
     });
 
