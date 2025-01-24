@@ -115,6 +115,47 @@ export const getCommentsById = async (req: Request, res: Response) => {
   }
 };
 
+export const getCommentByUser = async (req: Request, res: Response) => {
+  try {
+    const { userId } = req.existUser as { userId: string };
+    const comments = await db.comment.findMany({
+      where: { userId },
+      include: {
+        user: {
+          select: {
+            id: true,
+            username: true,
+          },
+        },
+        Post: {
+          select: {
+            id: true,
+            title: true,
+          },
+        },
+      },
+    });
+
+    if (!comments) {
+      res.status(404).json({
+        success: false,
+        message: "No comments found",
+      });
+    }
+
+    res.status(200).json({
+      success: true,
+      message: "Comments fetched successfully",
+      data: comments,
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: (error as Error).message,
+    });
+  }
+};
+
 export const deleteComment = async (req: Request, res: Response) => {
   try {
     const { commentId } = req.params;
