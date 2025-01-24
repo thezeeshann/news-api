@@ -9,43 +9,41 @@ declare module "express" {
   }
 }
 
-export const verifyToken = (
+export const verifyToken = async (
   req: Request,
   res: Response,
   next: NextFunction
-) => {
-  try {
-    const token = req.header("Authorization")?.replace("Bearer ", "");
-    if (!token || token === undefined) {
-      res.status(404).json({
-        success: false,
-        message: "Token missing",
-      });
-      return;
-    }
-    const jwtSecret = process.env.JWT_SECRET;
-    if (!jwtSecret) {
-      throw new Error("JWT_SECRET is not defined in the environment variables");
-    }
+): Promise<void> => {
+  const token = req.header("Authorization")?.replace("Bearer ", "");
+  if (!token) {
+    res.status(404).json({
+      success: false,
+      message: "Token missing",
+    });
+    return;
+  }
 
-    try {
-      const decode = jwt.verify(token, jwtSecret) as string | JwtPayload;
-      req.existUser = decode;
-    } catch (error: unknown) {
-      res.status(401).json({
-        success: false,
-        message:
-          error instanceof Error
-            ? error.message
-            : "Something went wrong while verifying the token",
-      });
-    }
-
-    next();
-  } catch (error) {
+  const jwtSecret = process.env.JWT_SECRET;
+  if (!jwtSecret) {
     res.status(500).json({
       success: false,
-      message: error instanceof Error ? error.message : "Unauthorized",
+      message: "JWT_SECRET is not defined in the environment variables",
     });
+    return;
+  }
+
+  try {
+    const decode = jwt.verify(token, jwtSecret) as string | JwtPayload;
+    req.existUser = decode;
+    next();
+  } catch (error) {
+    res.status(401).json({
+      success: false,
+      message:
+        error instanceof Error
+          ? error.message
+          : "Something went wrong while verifying the token",
+    });
+    return;
   }
 };
