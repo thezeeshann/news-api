@@ -86,6 +86,14 @@ export const getPosts = async (req: Request, res: Response) => {
       },
     });
 
+    if (!posts) {
+      res.status(404).json({
+        success: false,
+        message: "No posts found",
+      });
+      return;
+    }
+
     res.json({
       success: true,
       message: "Posts fetched successfully",
@@ -105,27 +113,6 @@ export const getPostById = async (req: Request, res: Response) => {
 
     const post = await db.post.findUnique({
       where: { id: postId },
-      include: {
-        author: {
-          select: {
-            id: true,
-            fullName: true,
-            username: true,
-            profile: true,
-          },
-        },
-        comments: {
-          include: {
-            user: {
-              select: {
-                id: true,
-                profile: true,
-                fullName: true,
-              },
-            },
-          },
-        },
-      },
     });
 
     if (!post) {
@@ -140,6 +127,42 @@ export const getPostById = async (req: Request, res: Response) => {
         data: post,
       });
     }
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: (error as Error).message,
+    });
+  }
+};
+
+export const getPostByUser = async (req: Request, res: Response) => {
+  try {
+    const { userId } = req.existUser as { userId: string };
+
+    const posts = await db.post.findMany({
+      where: { authorId: userId },
+      include: {
+        author: {
+          select: {
+            id: true,
+            fullName: true,
+            username: true,
+            profile: true,
+          },
+        },
+        _count: {
+          select: {
+            comments: true,
+          },
+        },
+      },
+    });
+
+    res.json({
+      success: true,
+      message: "Posts fetched successfully",
+      data: posts,
+    });
   } catch (error) {
     res.status(500).json({
       success: false,
