@@ -124,13 +124,8 @@ export const getCommentByUser = async (req: Request, res: Response) => {
         user: {
           select: {
             id: true,
-            username: true,
-          },
-        },
-        Post: {
-          select: {
-            id: true,
-            title: true,
+            fullName: true,
+            profile: true,
           },
         },
       },

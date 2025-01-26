@@ -153,18 +153,18 @@ export const getPostByUser = async (req: Request, res: Response) => {
             profile: true,
           },
         },
-        _count: {
-          select: {
-            comments: true,
-          },
-        },
       },
+    });
+
+    const postCount = await db.post.count({
+      where: { authorId: userId },
     });
 
     res.json({
       success: true,
       message: "Posts fetched successfully",
       data: posts,
+      count: postCount,
     });
   } catch (error) {
     res.status(500).json({
