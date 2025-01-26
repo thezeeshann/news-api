@@ -69,6 +69,9 @@ export const createPost = async (req: Request, res: Response) => {
 export const getPosts = async (req: Request, res: Response) => {
   try {
     const posts = await db.post.findMany({
+      orderBy: {
+        createdAt: "desc",
+      },
       include: {
         author: {
           select: {
