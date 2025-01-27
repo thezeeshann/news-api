@@ -116,6 +116,28 @@ export const getPostById = async (req: Request, res: Response) => {
 
     const post = await db.post.findUnique({
       where: { id: postId },
+      include: {
+        author: {
+          select: {
+            id: true,
+            fullName: true,
+            username: true,
+            profile: true,
+          },
+        },
+        comments: {
+          select: {
+            id: true,
+            title: true,
+            user: {
+              select: {
+                fullName: true,
+                profile: true,
+              },
+            },
+          },
+        },
+      },
     });
 
     if (!post) {
@@ -137,6 +159,7 @@ export const getPostById = async (req: Request, res: Response) => {
     });
   }
 };
+
 
 export const getPostByUser = async (req: Request, res: Response) => {
   try {
