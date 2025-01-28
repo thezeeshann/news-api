@@ -15,7 +15,7 @@ export const getUserProfile = async (req: Request, res: Response) => {
         message: "user not found",
       });
     } else {
-      res.json({
+      res.status(200).json({
         success: true,
         message: "User fetched successfully",
         data: user,
@@ -55,7 +55,7 @@ export const updateProfile = async (req: Request, res: Response) => {
       },
     });
 
-    res.json({
+    res.status(201).json({
       success: true,
       message: "User updated successfully",
       data: updatedUser,

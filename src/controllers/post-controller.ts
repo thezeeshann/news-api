@@ -97,7 +97,7 @@ export const getPosts = async (req: Request, res: Response) => {
       return;
     }
 
-    res.json({
+    res.status(200).json({
       success: true,
       message: "Posts fetched successfully",
       data: posts,
@@ -146,7 +146,7 @@ export const getPostById = async (req: Request, res: Response) => {
         message: "Post not found",
       });
     } else {
-      res.json({
+      res.status(200).json({
         success: true,
         message: "Post fetched successfully",
         data: post,
@@ -159,7 +159,6 @@ export const getPostById = async (req: Request, res: Response) => {
     });
   }
 };
-
 
 export const getPostByUser = async (req: Request, res: Response) => {
   try {
@@ -183,7 +182,7 @@ export const getPostByUser = async (req: Request, res: Response) => {
       where: { authorId: userId },
     });
 
-    res.json({
+    res.status(200).json({
       success: true,
       message: "Posts fetched successfully",
       data: posts,
@@ -216,7 +215,7 @@ export const deletePost = async (req: Request, res: Response) => {
 
     await db.post.delete({ where: { id: postId } });
 
-    res.json({
+    res.status(200).json({
       success: true,
       message: "Post deleted successfully",
     });
